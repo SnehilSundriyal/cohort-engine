@@ -1,0 +1,24 @@
+# Default grocery cohorts, written in the rule language and parsed at startup.
+# Format: priority | name | rule        (id = slug of name; higher priority wins in "priority" mode)
+
+# Lifecycle
+100 | New customer              | first_order_date WITHIN_DAYS 14
+ 95 | Churned                   | orders_total >= 1 AND days_since_last_order > 60
+ 90 | At-risk regular           | orders_90d >= 6 AND days_since_last_order BETWEEN 15 AND 60
+ 85 | One and done              | orders_total = 1 AND days_since_last_order > 21
+
+# Value (RFM-style)
+ 80 | Champion                  | orders_30d >= 6 AND spend_90d >= 12000
+ 70 | Weekly regular            | active_weeks_8w >= 6 AND days_since_last_order <= 10
+ 30 | Hibernating               | orders_total BETWEEN 2 AND 8 AND days_since_last_order BETWEEN 30 AND 90
+
+# Category affinity and upgrades
+ 60 | Daily dairy               | dairy_orders_30d >= 10
+ 55 | Premium upgrade candidate | staples_orders_30d >= 1 AND bought_premium = false AND spend_90d >= 4000
+ 50 | Premium buyer             | bought_premium = true AND orders_30d >= 1
+ 45 | Produce lover             | produce_orders_30d >= 4 AND NOT categories_30d CONTAINS 'meat'
+ 40 | Monthly stock-up          | staples_orders_30d >= 1 AND orders_30d <= 2 AND avg_order_value_90d >= 1500
+
+# Geography and acquisition
+ 20 | South metro active        | city IN ('bengaluru', 'hyderabad') AND (orders_30d >= 1 OR first_order_date WITHIN_DAYS 30)
+ 10 | Acquired 2026-W43         | first_order_week = '2026-W43'

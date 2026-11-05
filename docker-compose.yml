@@ -1,0 +1,10 @@
+# Local PostgreSQL for the "postgres" profile and the JDBC tests.
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: cohort
+      POSTGRES_PASSWORD: cohort
+      POSTGRES_DB: cohort
+    ports:
+      - "5434:5432"
